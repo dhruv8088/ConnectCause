@@ -1,6 +1,14 @@
+//import 'dart:html';
+
+import 'package:ngoapp/screens/signup_screen.dart';
+
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
+
+import '../services/File_upload_service.dart';
 
 class PostManager with ChangeNotifier {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
@@ -12,10 +20,13 @@ class PostManager with ChangeNotifier {
   final CollectionReference<Map<String, dynamic>> _userCollection =
   _firebaseFirestore.collection("users");
 
+  // final FileUploadService _fileUploadService = FileUploadService();
+
+
 
   String _message = '';
 
-  String get message => _message; //getter
+  String get message => _message;
 
   setMessage(String message) {
     //setter
@@ -25,6 +36,10 @@ class PostManager with ChangeNotifier {
 
   Future<bool> submitPost({
     String? description,
+    String? profilepic,
+
+
+
 
   }) async {
     bool isSubmitted = false;
@@ -32,12 +47,18 @@ class PostManager with ChangeNotifier {
     String userUid = _firebaseAuth.currentUser!.uid;
     FieldValue timeStamp = FieldValue.serverTimestamp();
 
+    // String? pictureUrl =
+    // await _fileUploadService.uploadPostFile(file: postImage);
+
 
     if (description != null) {
       await _postCollection.doc().set({
         "description": description,
         "createdAt": timeStamp,
-        "user_uid": userUid
+        "user_uid": userUid,
+        "profile_pic": profilepic,
+        "email" : _firebaseAuth.currentUser?.email,
+        "name" : Prop.name,
       }).then((_) {
         isSubmitted = true;
         setMessage('Post submitted successfully!');

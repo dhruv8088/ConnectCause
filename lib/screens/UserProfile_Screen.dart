@@ -278,6 +278,9 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
   late final CollectionReference usersRef;
   late final Stream<DocumentSnapshot> userStream;
   String data = '';
+  int c = 0;
+  List followerdata = [];
+  List followingdata = [];
 final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 final FirebaseAuth _auth = FirebaseAuth.instance;
   @override
@@ -298,9 +301,16 @@ final FirebaseAuth _auth = FirebaseAuth.instance;
 
     print(snapshot.exists);
     setState(() {
-      Map<String, dynamic>? dataMap = snapshot?.data() as Map<String, dynamic>?;
+      Map<String, dynamic>? dataMap = snapshot?.data() as Map<String, dynamic>? ;
+      // as Map<String, dynamic>?;
       data = dataMap!['name'] as String;
-      print(data);
+      print(dataMap!['following']);
+      // c = dataMap!['following'].length as int;
+      // Map<String, List>? followerMap = snapshot?.data() as Map<String, List>?;
+      // followerdata = followerMap!['followers'] as List;
+      // Map<String, List>? followingMap = snapshot?.data() as Map<String, List>?;
+      // followingdata = followingMap!['following'] as List;
+      // print(data);
 
     });
   }
@@ -327,7 +337,7 @@ final FirebaseAuth _auth = FirebaseAuth.instance;
                   Column(
                     children: [
                       Text(
-                        data,
+                        "${data}",
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 20,
@@ -335,7 +345,7 @@ final FirebaseAuth _auth = FirebaseAuth.instance;
                       ),
                       SizedBox(height: 8),
                       Text(
-                        '123 followers • 456 following',
+                        "Followers 123 . Following 134",
                         style: TextStyle(
                           fontSize: 16,
                           color: Colors.grey,
@@ -418,13 +428,13 @@ final FirebaseAuth _auth = FirebaseAuth.instance;
                     ),
                   ),
                   SizedBox(height: 16),
-                  Text(
-                    'Posts',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16,
-                    ),
-                  ),
+                  // Text(
+                  //   'Posts',
+                  //   style: TextStyle(
+                  //     fontWeight: FontWeight.bold,
+                  //     fontSize: 16,
+                  //   ),
+                  // ),
                   SizedBox(height: 8),
                   GridView.builder(
                     itemCount: 9,

@@ -10,8 +10,17 @@ import 'package:ngoapp/screens/Dropdown_box.dart';
 
 import 'Dropdown_box.dart';
 
+class Prop {
+  static String name = "" ;
+  static String email = "";
+}
+
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
+
+   get name => _SignUpScreenState().name;
+
+
 
 
   @override
@@ -23,12 +32,15 @@ class SignUpScreen extends StatefulWidget {
   // Widget build(BuildContext context) {
   //   TODO: implement build
   //   throw UnimplementedError();
+
     final TextEditingController _locationTextController = TextEditingController();
     final TextEditingController  _typeTextController = TextEditingController();
     final TextEditingController  _usernameTextController = TextEditingController();
   final TextEditingController  _emailTextController = TextEditingController();
   final TextEditingController _passwordTextController = TextEditingController();
 
+  // get name => Sign;
+  var name;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -55,6 +67,8 @@ class SignUpScreen extends StatefulWidget {
                 ),
                 reusableTextField("Enter Username", Icons.person_outline, false,
                     _usernameTextController),
+
+
                 SizedBox(
                   height: 30,
                 ),
@@ -95,7 +109,7 @@ class SignUpScreen extends StatefulWidget {
                   FirebaseAuth.instance.createUserWithEmailAndPassword(email: _emailTextController.text,
                       password: _passwordTextController.text).then((value) {
                         Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => HomeScreen(email: _emailTextController.text.toString(),)));
+                      MaterialPageRoute(builder: (context) => HomeScreen(email: _emailTextController.text.toString())));
                         // Create a new user with a first and last name
                         final user = <String, dynamic>{
                           "name": _usernameTextController.text.toString(),
@@ -107,10 +121,21 @@ class SignUpScreen extends StatefulWidget {
                           "location" : _locationTextController.text.toString()
 
                         };
+                         // final name = _usernameTextController.text.toString();
+                         //
+                        // Prop obj = new Prop();
+                        // // obj.name = _usernameTextController.text.toString();
+                        //
+                        // obj.setName(_usernameTextController.text.toString());
+                        // print("name:${name}");
+                        // print("${ _usernameTextController.text.toString()}");
+
                     var db = FirebaseFirestore.instance;
 // Add a new document with a generated ID
                     db.collection("users").doc(_emailTextController.text.toString()).set(user);
 
+                    Prop.name = _usernameTextController.text;
+                    Prop.email = _emailTextController.text;
 
                   });
 

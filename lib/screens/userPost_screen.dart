@@ -108,6 +108,8 @@
 //
 //
 //
+import 'dart:ui';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
@@ -148,6 +150,21 @@ class _PostScreenState extends State<PostListScreen> {
     QuerySnapshot querySnapshot =
     await firestore.collection('posts').where("user_uid" , isEqualTo: auth.currentUser?.uid).get();
     return querySnapshot.docs;
+  }
+  var counter = 0;
+  void _refreshScreen() {
+    setState(() {
+      counter++;
+    });
+  }
+
+  List<String> _list = List.generate(10, (index) => 'Item ${index + 1}');
+  Future<void> _refreshList() async {
+    // simulate a data fetch operation
+    await Future.delayed(Duration(seconds: 2));
+    setState(() {
+      _list = List.generate(10, (index) => 'Item ${index + 1}');
+    });
   }
 
   @override
@@ -215,11 +232,14 @@ class _PostScreenState extends State<PostListScreen> {
           appBar: AppBar(
             title: Text("My Posts"),
           ),
-          body: FutureBuilder<List<DocumentSnapshot>>(
-          future: getDocuments(),
+
+          body: RefreshIndicator(
+            onRefresh: _refreshList,
+            child: FutureBuilder<List<DocumentSnapshot>>(
+            future: getDocuments(),
       builder: (BuildContext context,
       AsyncSnapshot<List<DocumentSnapshot>> snapshot) {
-            print("Snapshotsssss : ${snapshot}");
+              print("Snapshotsssss : ${snapshot}");
       if (snapshot.connectionState == ConnectionState.waiting) {
       return Center(
       child: CircularProgressIndicator(),
@@ -235,15 +255,71 @@ class _PostScreenState extends State<PostListScreen> {
       itemCount: documents.length,
       itemBuilder: (BuildContext context, int index) {
       final data = documents[index];
+
       print("data : ${data}");
-      return ListTile(
-      title: Text(data['description']),
-      subtitle: Text(data['user_uid']),
+      print("length : ${documents.length + 1}");
+      return Container(
+        decoration: BoxDecoration(
+          border: Border.all(
+            width: 3,
+          ),
+              borderRadius: BorderRadius.circular(20)
+        ),
+        child: Column(
+          children: [
+            Row(
+              children: [
+                Icon(Icons.account_circle_rounded , size: 30,),
+                SizedBox(
+                  width: 10,
+                ),
+                Text(
+                  data['name']
+                )
+              ],
+            ),
+        Image.network(
+              data['profile_pic'],
+              height : 160,
+              width : 230,
+              fit: BoxFit.cover,
+
+          ),
+            SizedBox(
+              height: 10
+            ),
+            Text(
+                data['description']
+            ),
+            SizedBox(
+                height: 20
+            ),
+
+          ],
+        ),
+
       );
+      //   ListTile(
+      // leading: Icon(
+      //   Icons.account_box,
+      //
+      //   size: 35,
+      // ),
+      // subtitle: Text(data['description']
+      // ),
+      //   title: Image.network(
+      //       data['profile_pic'],
+      //       height : 160,
+      //       width : 30,
+      //       fit: BoxFit.cover,
+      //
+      //   ),
+      // );
       },
       );
       }
       },
+            ),
           ),
       );
   }

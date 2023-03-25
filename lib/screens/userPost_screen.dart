@@ -108,6 +108,7 @@
 //
 //
 //
+import 'dart:async';
 import 'dart:ui';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -133,6 +134,21 @@ class MyApppost extends StatefulWidget {
     throw UnimplementedError();
   }
 }
+
+class Completed extends ChangeNotifier{
+  Completed({required this.isCompleted});
+  bool isCompleted = false;
+
+  void changeIsCompleted() {
+    this.isCompleted = !isCompleted;
+    notifyListeners();
+  }
+}
+
+
+
+
+
 class PostListScreen extends StatefulWidget{
 
 
@@ -145,7 +161,33 @@ class PostListScreen extends StatefulWidget{
 class _PostScreenState extends State<PostListScreen> {
   final FirebaseFirestore firestore = FirebaseFirestore.instance;
   final FirebaseAuth auth = FirebaseAuth.instance;
+  // bool c = false;
 
+
+  bool ActivityCompleted(postID){
+    bool c = false;
+    FirebaseFirestore firestorm = FirebaseFirestore.instance;
+    final postRef = firestorm.collection("posts").doc(postID);
+    postRef.update({'completed':'Yes'});
+    c = true;
+    return true;
+    
+  }
+  bool validation(postID){
+    bool c = true;
+    firestore.collection("posts").doc(postID).get().then(
+        (DocumentSnapshot doc){
+          final data = doc.data() as Map<String , dynamic>;
+          if(data['completed']=='Yes'){
+            c = true;
+          }
+
+          
+        }
+    );
+    return c;
+  }
+   
   Future<List<DocumentSnapshot>> getDocuments() async {
     QuerySnapshot querySnapshot =
     await firestore.collection('posts').where("user_uid" , isEqualTo: auth.currentUser?.uid).get();
@@ -255,6 +297,7 @@ class _PostScreenState extends State<PostListScreen> {
       itemCount: documents.length,
       itemBuilder: (BuildContext context, int index) {
       final data = documents[index];
+      var postID = '${data['description']}_${data['email']}';
 
       print("data : ${data}");
       print("length : ${documents.length + 1}");
@@ -273,11 +316,12 @@ class _PostScreenState extends State<PostListScreen> {
                 SizedBox(
                   width: 10,
                 ),
-                Text(
-                  data['name']
-                )
+                // Text(
+                //   // data['name']
+                // )
               ],
             ),
+
         Image.network(
               data['profile_pic'],
               height : 160,
@@ -288,8 +332,33 @@ class _PostScreenState extends State<PostListScreen> {
             SizedBox(
               height: 10
             ),
-            Text(
-                data['description']
+            Row(
+              children: [
+
+                Text(
+                    data['description']
+                ),
+                SizedBox(
+                  width: 25
+                ),
+                InkWell(
+
+                  onTap : (){
+                   
+                    ActivityCompleted(postID);
+                 
+                   
+
+
+
+                  },
+                  child: (validation(postID))? Icon(
+                    Icons.verified, color: Colors.green,
+                  ): Icon(
+                    Icons.verified , color: Colors.grey,
+                  )
+                )
+              ],
             ),
             SizedBox(
                 height: 20
@@ -323,4 +392,6 @@ class _PostScreenState extends State<PostListScreen> {
           ),
       );
   }
+
 }
+

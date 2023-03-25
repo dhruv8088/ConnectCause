@@ -1,5 +1,3 @@
-//import 'dart:html';
-
 import 'package:ngoapp/screens/signup_screen.dart';
 
 import 'dart:io';
@@ -10,13 +8,13 @@ import 'package:flutter/cupertino.dart';
 
 import '../services/File_upload_service.dart';
 
-class PostManager with ChangeNotifier {
+class UserProfileManager with ChangeNotifier {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
   static final FirebaseFirestore _firebaseFirestore =
       FirebaseFirestore.instance;
 
-  final CollectionReference<Map<String, dynamic>> _postCollection =
-  _firebaseFirestore.collection("posts");
+  final CollectionReference<Map<String, dynamic>> _UserProfileCollection =
+  _firebaseFirestore.collection("userProfile");
   final CollectionReference<Map<String, dynamic>> _userCollection =
   _firebaseFirestore.collection("users");
 
@@ -35,31 +33,30 @@ class PostManager with ChangeNotifier {
   }
 
   Future<bool> submitPost({
-    String? description,
-    String? profilepic,
+    String? bio,
+    String? qrpic,
   }) async {
     bool isSubmitted = false;
 
     String userUid = _firebaseAuth.currentUser!.uid;
-    FieldValue timeStamp = FieldValue.serverTimestamp();
+
 
     // String? pictureUrl =
     // await _fileUploadService.uploadPostFile(file: postImage);
 
 
-    if (description != null) {
-      await _postCollection.doc('${description}_${_firebaseAuth.currentUser?.email}').set({
-        "description": description,
-        "createdAt": timeStamp,
+    if (bio != null) {
+      await _UserProfileCollection.doc(
+          '${bio}_${_firebaseAuth.currentUser?.email}').set({
+        "bio": bio,
         "user_uid": userUid,
-        "profile_pic": profilepic,
-        "email" : _firebaseAuth.currentUser?.email,
+        "qr_pic": qrpic,
+        "email": _firebaseAuth.currentUser?.email,
         // "name" : Prop.name,
-        "like" : [],
-        "completed" : "No"
+
       }).then((_) {
         isSubmitted = true;
-        setMessage('Post submitted successfully!');
+        setMessage('QR submitted successfully!');
       }).catchError((onError) {
         isSubmitted = false;
         setMessage('$onError');

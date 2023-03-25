@@ -25,9 +25,10 @@ class _SignInScreenState extends State<SignInScreen>{
   @override
   Widget build(BuildContext context){
     return Scaffold(
+
       body: Container(
         decoration: const BoxDecoration(
-            color:Colors.blue,
+            color:Colors.black,
             // height: 900.0,
             // width : 900,0
             ),
@@ -38,16 +39,47 @@ class _SignInScreenState extends State<SignInScreen>{
             padding: EdgeInsets.fromLTRB(
               20,MediaQuery.of(context).size.height * 0.2 , 20 , 0),
             child: Column(
+
               children: <Widget>[
-                logoWidget("assets/Images/logo.jpg"),
+                Padding(padding: EdgeInsets.fromLTRB(0, 0, 0, 0)),
+                Container(
+
+                  child: Image(
+                    height: 200,
+                    width: 200,
+                    image: AssetImage("assets/Images/guylog.png"),
+                    fit: BoxFit.cover,
+                  ),
+                ),
+                SizedBox(
+                  height: 10,
+                ),
+                Text(
+                  "Welcome Back!",
+                  textAlign: TextAlign.left,
+                  style: TextStyle(color: Colors.white ,
+                  fontSize: 28 , fontStyle: FontStyle.normal , fontWeight: FontWeight.w500),
+
+
+                ),
+
+                Container(
+                  height: 40,
+                  child: Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text("Welcome back"),
+                  ),
+
+
+                ),
+                SizedBox(
+                  height: 5,
+                ),
+                reusableTextField("Enter Username", Icons.person_outline, false, false, _emailTextController),
                 SizedBox(
                   height: 20,
                 ),
-                reusableTextField("Enter Username", Icons.person_outline, false, _emailTextController),
-                SizedBox(
-                  height: 20,
-                ),
-                reusableTextField("Enter Password", Icons.lock_outlined, false, _passwordTextController),
+                reusableTextField("Enter Password", Icons.lock_outlined, false, false, _passwordTextController),
                 SizedBox(
                   height: 20,
                 ),

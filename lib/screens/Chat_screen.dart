@@ -46,6 +46,8 @@ class _ChatScreenState extends State<ChatScreen>{
 
  }
 
+
+
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
@@ -53,14 +55,21 @@ class _ChatScreenState extends State<ChatScreen>{
     return Scaffold(
     appBar:AppBar(
         title:Text("Chats"),
+      backgroundColor: Colors.black87,
     ),
       body: isLoading
       ?Center(
         child: Container(
-          height: size.height / 20,
-          width: size.height / 20,
-            child: CircularProgressIndicator(),
+
+          height: size.height / 2,
+          width: size.height / 2,
+            child: Image(image: AssetImage("assets/Images/chat_screen_nf.png"),
+              height: 1000,
+              width: 1000,
+            ),
+
         ),
+
       ):Column(
         children: [
           SizedBox(
@@ -69,16 +78,19 @@ class _ChatScreenState extends State<ChatScreen>{
           ),
           SizedBox(
             height: size.height / 14,
-            width: size.width,
+            width: size.width/1.04,
+
             child: Container(
               height: size.height / 14,
               width: size.width / 1.15,
+
+
                 child: TextField(
                   controller: _search,
                     decoration: InputDecoration(
                       hintText: "Search",
                         border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10),
+                          borderRadius: BorderRadius.circular(4),
                         )
                     )
                 )
@@ -87,24 +99,51 @@ class _ChatScreenState extends State<ChatScreen>{
           SizedBox(
             height: 20,
           ),
-          ElevatedButton(onPressed: onSearch, child: const Text("Search")),
+          ElevatedButton( onPressed: onSearch, child: const Text("Search"),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.black87,
+            )
+          ),
 
-           userMap!=null?ListTile(
-            onTap: () {
-                // print(_auth.currentUser!.displayName!);
-                // print(userMap!['name']);
-                String roomId =  userMap!['name'];
+           userMap!=null?
+           Column(
+             children: [
+               SizedBox(
+                 height: 5
+               ),
+               Container(
+                 decoration: BoxDecoration(
+                   border: Border.all(
+                     width: 1
+                     )
+                   ),
 
-              Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => UserProfileScreen(email: _search.text.toString())));
+                 child: ListTile(
+                  onTap: () {
+                      // print(_auth.currentUser!.displayName!);
+                      // print(userMap!['name']);
+                      String roomId =  userMap!['name'];
+
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context) => UserProfileScreen(email: _search.text.toString())));
 
 
-            },
-             leading:Icon( Icons.account_box , color: Colors.black,),
-            title : Text(userMap?['name']),
-            subtitle: Text(userMap?['email']),
-             trailing: Icon(Icons.chat_bubble_outlined , color:Colors.black),
-          ):Container(),
+                  },
+
+                   leading:
+                   Icon( Icons.account_box , color: Colors.black,),
+                  title : Text(userMap?['name']),
+                  subtitle: Text(userMap?['email']),
+                   trailing: Icon(Icons.chat_bubble_outlined , color:Colors.black),
+          ),
+               ),
+               SizedBox(
+                 height: 30
+               ),
+               Image(
+                   height: 250 , width: 250 , image: AssetImage("assets/Images/msmpt.png"))
+             ],
+           ):Container(),
 
 
         ],

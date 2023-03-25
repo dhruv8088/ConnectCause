@@ -257,10 +257,15 @@
 //     );
 //   }
 // }
+import 'dart:math';
+import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:ngoapp/Managers/user_profile_manager.dart';
 import 'package:ngoapp/screens/ChatRoom.dart';
 
 class UserProfileScreen extends StatefulWidget{
@@ -275,21 +280,47 @@ class UserProfileScreen extends StatefulWidget{
 
 class _UserProfileScreenState extends State<UserProfileScreen> {
   bool isPressed = false;
+
+  final UserProfileManager _profileManager = UserProfileManager();
   late final CollectionReference usersRef;
   late final Stream<DocumentSnapshot> userStream;
+
   String data = '';
   int c = 0;
   List followerdata = [];
   List followingdata = [];
 final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 final FirebaseAuth _auth = FirebaseAuth.instance;
+String initialText = "Link for your Razor Pay";
+bool isEditingText = false;
+  final TextEditingController _editingController = TextEditingController();
+  List<String> _list = List.generate(100, (index) => 'Item ${index + 1}');
+  Future<void> _refreshList() async {
+
+
+    // simulate a data fetch operation
+
+    await Future.delayed(Duration(seconds: 2));
+    setState(() {
+      _list = List.generate(10, (index) => 'Item ${index + 1}');
+    });
+  }
+
   @override
   void initState() {
+
     super.initState();
+
+
 
     // usersRef = FirebaseFirestore.instance.collection('users');
     // userStream = usersRef.doc(widget.userId).snapshots();
     getData();
+  }
+  @override
+  void dispose(){
+    _editingController.dispose();
+    super.dispose();
   }
 
   void getData() async {
@@ -316,10 +347,19 @@ final FirebaseAuth _auth = FirebaseAuth.instance;
   }
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
 
     return Scaffold(
       appBar: AppBar(
         title: Text('User Profile'),
+        backgroundColor: Colors.black38,
+        actions: [
+          Container(
+            alignment: Alignment.centerRight,
+            child: IconButton(onPressed: (){}, icon: Icon(Icons.edit_note_outlined, size: 37)),
+          )
+          
+        ],
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -328,137 +368,224 @@ final FirebaseAuth _auth = FirebaseAuth.instance;
             Container(
               padding: EdgeInsets.all(16),
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                // mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   const CircleAvatar(
                     radius: 50,
                     backgroundImage: AssetImage('assets/Images/profile.jpg'),
                   ),
+                  SizedBox(
+                   width: size.width/8,
+                  ),
                   Column(
                     children: [
-                      Text(
-                        "${data}",
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 20,
+                      SizedBox(
+                        height: size.height/30,
+                      ),
+                      Container(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          "${data}",
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 20,
+                          ),
                         ),
                       ),
-                      SizedBox(height: 8),
+                      SizedBox(height: size.height/35),
                       Text(
-                        "Followers 123 . Following 134",
+                        "Followers  .   Following ",
                         style: TextStyle(
                           fontSize: 16,
-                          color: Colors.grey,
+                          color: Colors.black87,
+                          fontWeight: FontWeight.w500
                         ),
                       ),
-                      SizedBox(height: 8),
-                  (_auth.currentUser!.email == widget.email) ?
+                      Container(alignment: Alignment.bottomCenter,child: Text("123                   234",style: TextStyle(
+                        fontWeight: FontWeight.w800,
+                        fontSize: 16
+                      ),)),
+
+                      SizedBox(height: 20),
+                  Row(
+                    children: [
+                      (_auth.currentUser!.email == widget.email) ?
+
                       ElevatedButton(
                         onPressed: () {
                         },
                         child: Text('Edit Profile'),
                         style: ElevatedButton.styleFrom(
-                          primary: Colors.blue,
+                          primary: Colors.black87,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(16),
                           ),
                         ),
                       ) : ElevatedButton(
 
-                    onPressed: () {
+                        onPressed: () {
 
-                      var db = FirebaseFirestore.instance;
+                          var db = FirebaseFirestore.instance;
 // Add a new document with a generated ID
-                      db.collection("users").doc(widget.email).update({
-                        'followers': FieldValue.arrayUnion([_auth.currentUser!.email] )
-                      });
+                          db.collection("users").doc(widget.email).update({
+                            'followers': FieldValue.arrayUnion([_auth.currentUser!.email] )
+                          });
 
 // Add a new document with a generated ID
-                      db.collection("users").doc(_auth.currentUser!.email).update({
-                        'following': FieldValue.arrayUnion([widget.email] )
-                      });
-                      setState(() {
-                        isPressed = true;
-                      });
+                          db.collection("users").doc(_auth.currentUser!.email).update({
+                            'following': FieldValue.arrayUnion([widget.email] )
+                          });
+                          setState(() {
+                            isPressed = true;
+                          });
 
-                    },
+                        },
 
-                    child: isPressed ? Text("Following") : Text("Follow"),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.blue,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16),
+                        child: isPressed ? Text("Following") : Text("Follow"),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.blue,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                        ),
                       ),
-                    ),
-                  ),
+                      SizedBox(
+                        width: size.width / 12.5,
+                      ),
                       ElevatedButton(onPressed: (){
 
                         Navigator.push(context, MaterialPageRoute(builder: (context) => ChatRoomScreen(currentUser: _auth.currentUser?.email, otherUser: widget.email)));
                       }, child: Text("Chat"),
                         style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.blue,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(16),
-                        ),
-                      ),)
+                          backgroundColor: Colors.black,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                        ),)
+                    ],
+                  ),
+
                     ],
                   ),
                 ],
               ),
             ),
+
             // User profile body
             Container(
               padding: EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Bio',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16,
+              alignment: Alignment.centerLeft,
+
+              child: Container(
+                width: size.width/1.11,
+
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10),
+                  border: Border.all(
+                    width: 1.5,
+                    color: Colors.grey,
+                  )
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      ' Bio',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                      ),
                     ),
-                  ),
-                  SizedBox(height: 8),
-                  Text(
-                    'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus.',
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: Colors.grey,
+                    SizedBox(height: size.height / 45),
+
+                    SizedBox(height: 16),
+                    Container(
+                      child:_editTitleTextField() ,
                     ),
-                  ),
-                  SizedBox(height: 16),
-                  // Text(
-                  //   'Posts',
-                  //   style: TextStyle(
-                  //     fontWeight: FontWeight.bold,
-                  //     fontSize: 16,
-                  //   ),
-                  // ),
-                  SizedBox(height: 8),
-                  GridView.builder(
-                    itemCount: 9,
-                    shrinkWrap: true,
-                    physics: NeverScrollableScrollPhysics(),
-                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 3,
-                      mainAxisSpacing: 8,
-                      crossAxisSpacing: 8,
-                    ),
-                    itemBuilder: (context, index) {
-                      return Container(
-                        decoration: BoxDecoration(
-                          image: DecorationImage(
-                            image: AssetImage('assets/images/post$index.jpg'),
-                            fit: BoxFit.cover,
-                          ),
-                        ),
-                      );
-                    },
-                  ),
-                ],
+                    SizedBox(height: 8),
+                    // GridView.builder(
+                    //   itemCount: 9,
+                    //   shrinkWrap: true,
+                    //   physics: NeverScrollableScrollPhysics(),
+                    //   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    //     crossAxisCount: 3,
+                    //     mainAxisSpacing: 8,
+                    //     crossAxisSpacing: 8,
+                    //   ),
+                    //   itemBuilder: (context, index) {
+                    //     return Container(
+                    //       decoration: BoxDecoration(
+                    //         image: DecorationImage(
+                    //           image: AssetImage('assets/images/post$index.jpg'),
+                    //           fit: BoxFit.cover,
+                    //         ),
+                    //       ),
+                    //     );
+                    //   },
+                    // ),
+
+                  ],
+                ),
               ),
             ),
+            SizedBox(
+              height: 5
+            ),
+            RefreshIndicator(
+              onRefresh: _refreshList,
+              child: Container(
+                height: 200,
+                width: size.width/1.12,
+                decoration: BoxDecoration(
+                  border: Border.all(
+                    width: 2,
+                    color: Colors.grey,
+                  )
+                ),
+                child: Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      InkWell(
+                          child: Icon(Icons.add_a_photo_outlined , size: 40 ),
+                      onTap: () {
+                        final bio = _editingController.text;
+                        void PostQR() async {
+                          final image = await ImagePicker().pickImage(
+                              source: ImageSource.gallery,
+                              maxWidth: 512,
+                              maxHeight: 512,
+                              imageQuality: 90);
+                          var rnd = Random();
+                          FirebaseAuth _auth = FirebaseAuth.instance;
+                          Reference ref = await FirebaseStorage.instance
+                              .ref()
+                              .child("${_auth.currentUser?.email}-${rnd.nextInt(
+                              100000)}_qrcode.jpg");
+
+                          await ref.putFile(File(image!.path));
+
+                          ref.getDownloadURL().then((value) =>
+                              _profileManager.submitPost(
+                                bio: bio, qrpic: value));
+                        };
+                        PostQR();
+
+                      },
+
+                      ),
+                      Text("Upload QR-Code" , style: TextStyle(
+                        color: Colors.grey,
+                        fontSize: 18,
+                        fontWeight: FontWeight.w400
+
+                      ),)
+                    ],
+
+                  ),
+                ),
+              ),
+            )
           ],
         ),
       ),
@@ -466,4 +593,43 @@ final FirebaseAuth _auth = FirebaseAuth.instance;
     // TODO: implement build
     throw UnimplementedError();
   }
+  Widget _editTitleTextField() {
+    if (isEditingText) {
+      return Center(
+        child: Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(
+            width: 2,
+            )
+          ),
+          child: TextField(
+            onSubmitted: (newValue){
+              setState(() {
+                initialText = newValue;
+                isEditingText =false;
+              });
+            },
+            autofocus: true,
+            controller: _editingController,
+          ),
+        ),
+      );
+    }
+    return InkWell(
+        onTap: () {
+      setState(() {
+        isEditingText = true;
+      });
+    },
+    child: Text(
+    initialText,
+    style: TextStyle(
+    color: Colors.black,
+    fontSize: 18.0,
+    ),)
+    );
+  }
 }
+
+

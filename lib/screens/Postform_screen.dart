@@ -64,15 +64,17 @@ import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:ngoapp/Managers/Post_manager.dart';
 import 'package:ngoapp/resuable_widgets/reusable_widget.dart';
 import 'package:ngoapp/screens/UserProfile_Screen.dart';
 import 'package:ngoapp/screens/userPost_screen.dart';
 import 'package:ngoapp/screens/signup_screen.dart';
+
+import 'Chat_screen.dart';
 
 
 void main() => runApp(const MyApp());
@@ -82,6 +84,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     const appTitle = 'Form Validation Demo';
+
 
     return MaterialApp(
       title: appTitle,
@@ -97,6 +100,8 @@ class MyApp extends StatelessWidget {
 
 // Create a Form widget.
 class MyCustomForm extends StatefulWidget {
+  // MyCustomForm(this.email);
+  //
   const MyCustomForm({super.key});
 
 
@@ -114,9 +119,12 @@ class MyCustomFormState extends State<MyCustomForm> {
   //
   final PostManager _postManager = PostManager();
   final TextEditingController  _postTextController = TextEditingController();
+  final fcmToken = FirebaseMessaging.instance.getToken();
+
 
   var counter = 0;
   void _refreshScreen() {
+    print("FCM TOKENNNNNNNNNNN${fcmToken}");
     setState(() {
       counter++;
     });
@@ -143,7 +151,9 @@ void dispose(){
   Widget build(BuildContext context) {
     // Build a Form widget using the _formKey created above.
     late String desc ;
+    // print("email in post form screen:${widget.email}");
     return Material(
+
       key: _formKey,
 
 
@@ -155,33 +165,84 @@ void dispose(){
         // mainAxisAlignment: MainAxisAlignment.center,
 
         children: <Widget> [
+         AppBar(
+            title: const Text('Connect Cause'),
+            backgroundColor: Colors.blueGrey,
+            actions: <Widget> [
+              IconButton(
 
-          Row(
+                alignment: Alignment.center,
+                icon: Icon(Icons.chat_bubble_rounded , color: Colors.white),
+                onPressed: (){
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => ChatScreen()));
+
+                },
+                iconSize: 35,
 
 
-           children: [
-             Padding(padding: EdgeInsets.fromLTRB(0, 100, 0, 0)),
-             InkWell(
-                 child: Icon(Icons.account_circle_rounded,size: 40,),
-               onTap: (){
-                   Navigator.push(context, MaterialPageRoute(
-                   builder: (context) => UserProfileScreen(email:Prop.email )));
-               },
+              ),
+              SizedBox(
+                width: 30,
+              ),
+              IconButton(
+                alignment: Alignment.topLeft,
+                icon: Icon(Icons.person_2_outlined),
+                onPressed: (){
+                  // Navigator.push(context, MaterialPageRoute(builder: (context) => UserProfileScreen(email : widget.email)));
+                },
+                iconSize: 32,
+                color: Colors.white,
 
+              ),
 
-
-             ),
-             SizedBox(
-               width: 10,
-             ),
-             Text("${Prop.name}")
-           ],
+            ],
           ),
+
+          // Row(
+          //
+          //
+          //  children: [
+          //    Padding(padding: EdgeInsets.fromLTRB(0, 100, 0, 0)),
+          //    InkWell(
+          //        child: Icon(Icons.account_circle_rounded,size: 40,),
+          //      onTap: (){
+          //          Navigator.push(context, MaterialPageRoute(
+          //          builder: (context) => UserProfileScreen(email:Prop.email )));
+          //      },
+          //
+          //
+          //
+          //    ),
+          //    SizedBox(
+          //      width: 10,
+          //    ),
+          //    Text("${Prop.name}")
+          //  ],
+          // ),
           // logoWidget(
           //   "assets/Images/logo.jpg"
           // ),
           SizedBox(
-            height: 50,
+            height: 30,
+          ),
+          Container(
+            margin: EdgeInsets.fromLTRB(20, 0, 20, 0),
+            decoration: BoxDecoration(
+                border: Border(
+                  bottom: BorderSide(width: 2.0, color : Colors.black26)
+                )
+            ),
+
+            child : Row(
+              children: [
+                Padding(padding: EdgeInsets.fromLTRB(0, 0, 0, 2)),
+                Text("Add Post",
+                    style : TextStyle(fontWeight: FontWeight.bold, fontSize: 30))
+              ],
+            ),
+          ),
+          SizedBox(
+            height: 20,
           ),
           Container(
             // decoration: BoxDecoration(
@@ -189,18 +250,24 @@ void dispose(){
             //     width: 2
             //   )
             // ),
+            color:Colors.grey,
+            margin: EdgeInsets.fromLTRB(20, 0, 20, 0),
+
             child: new TextFormField(
     controller: _postTextController,
     cursorHeight: 30,
     cursorColor: Colors.red,
+
   minLines: 5,
     maxLines: 10,
     decoration: InputDecoration(
 
+
     label: const Center(
-      child: Text("Enter some description")
+      child: Text("Enter some description", style: TextStyle(fontSize: 20,color: Colors.black),)
     ),
-            border: OutlineInputBorder(),
+            border: OutlineInputBorder(borderSide : BorderSide.none
+            ),
     ),
     onSaved :(value){
             desc = value!;
@@ -242,6 +309,9 @@ void dispose(){
                 ref.getDownloadURL().then((value) =>
                 _postManager.submitPost(description: desc , profilepic: value , ));
 
+
+// Add a new comment to the "comments" subcollection
+
                 Navigator.push(context, MaterialPageRoute(
                     builder: (context) => PostListScreen()));
 
@@ -271,7 +341,7 @@ void dispose(){
             child: ElevatedButton(
               onPressed: () {
                 final desc = _postTextController.text;
-                _postManager.submitPost(description: desc, profilepic: null);
+                _postManager.submitPost(description: desc, profilepic:"");
                 Navigator.push(context, MaterialPageRoute(
                     builder: (context) => PostListScreen()));
 

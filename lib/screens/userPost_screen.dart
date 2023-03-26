@@ -115,6 +115,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:ngoapp/screens/Validation_form.dart';
+
 
 class MyApppost extends StatefulWidget {
 
@@ -162,6 +164,11 @@ class _PostScreenState extends State<PostListScreen> {
   final FirebaseFirestore firestore = FirebaseFirestore.instance;
   final FirebaseAuth auth = FirebaseAuth.instance;
   // bool c = false;
+  TextEditingController _promptController = TextEditingController();
+  TextEditingController _promptController2 = TextEditingController();
+  TextEditingController _promptController3 = TextEditingController();
+
+
 
 
   bool ActivityCompleted(postID){
@@ -301,73 +308,134 @@ class _PostScreenState extends State<PostListScreen> {
 
       print("data : ${data}");
       print("length : ${documents.length + 1}");
-      return Container(
-        decoration: BoxDecoration(
-          border: Border.all(
-            width: 3,
-          ),
-              borderRadius: BorderRadius.circular(20)
-        ),
-        child: Column(
-          children: [
-            Row(
-              children: [
-                Icon(Icons.account_circle_rounded , size: 30,),
-                SizedBox(
-                  width: 10,
-                ),
-                // Text(
-                //   // data['name']
-                // )
-              ],
+      return
+        Material(
+          elevation: 35,
+          borderRadius: BorderRadius.circular(30),
+        child: Padding(
+        padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
+          child: Container(
+
+          decoration: BoxDecoration(
+            border: Border.all(
+              width: 1,
             ),
-
-        Image.network(
-              data['profile_pic'],
-              height : 160,
-              width : 230,
-              fit: BoxFit.cover,
-
+                borderRadius: BorderRadius.circular(20)
           ),
-            SizedBox(
-              height: 10
-            ),
-            Row(
+          child: Container(
+            margin: const EdgeInsets.fromLTRB( 0, 10, 0, 0),
+            width: MediaQuery.of(context).size.width / 1.25,
+            child: Column(
+              mainAxisAlignment : MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+
               children: [
+                Row(
+                  children: [
+                    Icon(Icons.account_circle_rounded , size: 30,),
+                    SizedBox(
+                      width: MediaQuery.of(context).size.width / 1.35,
+                    ),
+                    // Text(
+                    //   // data['name']
+                    // ),
+            InkWell(
 
-                Text(
-                    data['description']
-                ),
-                SizedBox(
-                  width: 25
-                ),
-                InkWell(
+                onTap : (){
 
-                  onTap : (){
-                   
-                    ActivityCompleted(postID);
-                 
-                   
-
-
-
-                  },
-                  child: (validation(postID))? Icon(
-                    Icons.verified, color: Colors.green,
-                  ): Icon(
-                    Icons.verified , color: Colors.grey,
-                  )
+                  // showDialog(
+                  //   context: context,
+                  //   builder: (BuildContext context) {
+                  //     // return AlertDialog(
+                  //     //   title: Row(
+                  //     //     children: [
+                  //     //       Text('From'),
+                  //     //       SizedBox(
+                  //     //         width: MediaQuery.of(context).size.width / 22
+                  //     //       ),
+                  //     //       Text('Type'),
+                  //     //       SizedBox(
+                  //     //           width: MediaQuery.of(context).size.width / 22
+                  //     //       ),
+                  //     //       Text('To'),
+                  //     //
+                  //     //     ],
+                  //     //   ),
+                  //     //   content: Row(
+                  //     //     children: [
+                  //     //       TextField(
+                  //     //         onChanged: (value){
+                  //     //
+                  //     //         },
+                  //     //         controller: _promptController,
+                  //     //         // decoration: InputDecoration(
+                  //     //         //   hintText: "Url of your Excel Sheet here",
+                  //     //         // ),
+                  //     //       ),
+                  //     //       TextField(
+                  //     //         onChanged: (value){
+                  //     //
+                  //     //         },
+                  //     //         controller: _promptController2,
+                  //     //         // decoration: InputDecoration(
+                  //     //         //   hintText: "Url of your Excel Sheet here",
+                  //     //         // ),
+                  //     //       ),
+                  //     //       TextField(
+                  //     //         onChanged: (value){
+                  //     //
+                  //     //         },
+                  //     //         controller: _promptController3,
+                  //     //         // decoration: InputDecoration(
+                  //     //         //   hintText: "Url of your Excel Sheet here",
+                  //     //         // ),
+                  //     //       ),
+                  //     //     ],
+                  //     //   ),
+                  //     // );
+                  //   },
+                  // );
+                  ActivityCompleted(postID);
+                  Navigator.push(context, MaterialPageRoute(builder: (context)=> MyAlertDialog()));
+                },
+                child: (validation(postID))? Icon(
+                  Icons.verified, color: Colors.green,
+                ): Icon(
+                  Icons.radio_button_off_rounded , color: Colors.grey,
                 )
+              )
+                  ],
+                ),
+
+            Image.network(
+                  data['profile_pic'],
+                  height : 160,
+                  width : MediaQuery.of(context).size.width/1.12,
+                  fit: BoxFit.cover,
+
+              ),
+                SizedBox(
+                  height: 10
+                ),
+                Row(
+                  children: [
+
+                    Text(
+                        data['description']
+                    ),
+                  ],
+                ),
+                SizedBox(
+                    height: 20
+                ),
+
               ],
             ),
-            SizedBox(
-                height: 20
-            ),
+          ),
 
-          ],
-        ),
-
-      );
+      ),
+        )
+        );
       //   ListTile(
       // leading: Icon(
       //   Icons.account_box,

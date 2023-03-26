@@ -211,7 +211,7 @@ class _CommentScreenState extends State<CommentScreen> {
 
       appBar: AppBar(
         title: Text("Comment Page"),
-        backgroundColor: Colors.pink,
+        backgroundColor: Colors.blueGrey,
          // leading:  ElevatedButton(
          //    child:Text("Refresh for comments"),
          //    onPressed: () async {
@@ -277,7 +277,7 @@ class _CommentScreenState extends State<CommentScreen> {
               },
               formKey: formKey,
               commentController: commentController,
-              backgroundColor: Colors.pink,
+              backgroundColor: Colors.blueGrey,
               textColor: Colors.white,
               sendWidget: Icon(Icons.send_sharp, size: 30, color: Colors.white),
             ),

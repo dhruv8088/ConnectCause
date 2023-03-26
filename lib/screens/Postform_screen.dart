@@ -73,6 +73,7 @@ import 'package:ngoapp/resuable_widgets/reusable_widget.dart';
 import 'package:ngoapp/screens/UserProfile_Screen.dart';
 import 'package:ngoapp/screens/userPost_screen.dart';
 import 'package:ngoapp/screens/signup_screen.dart';
+import 'package:multiselect/multiselect.dart';
 
 import 'Chat_screen.dart';
 
@@ -120,7 +121,7 @@ class MyCustomFormState extends State<MyCustomForm> {
   final PostManager _postManager = PostManager();
   final TextEditingController  _postTextController = TextEditingController();
   final fcmToken = FirebaseMessaging.instance.getToken();
-
+  List<String> tags = [];
 
   var counter = 0;
   void _refreshScreen() {
@@ -245,42 +246,63 @@ void dispose(){
             height: 20,
           ),
           Container(
+            color:Colors.white30,
+            margin: EdgeInsets.fromLTRB(20, 0, 20, 0),
+            child: DropDownMultiSelect(
+              onChanged: (List<String> x) {
+                setState(() {
+                  tags =x;
+                });
+              },
+              options: ['Education'
+
+                , 'Healthcare', 'Environmental' , 'Food', 'Social Cause'],
+              selectedValues: tags,
+              whenEmpty: 'Select Post Tags',
+            ),
+          ),
+          SizedBox(
+            height: MediaQuery.of(context).size.height / 12,
+          ),
+          Container(
             // decoration: BoxDecoration(
-            //   border: Border.all(
-            //     width: 2
-            //   )
+            //     border: Border.all(
+            //       color: Colors.black, //color of border
+            //       width: 2, //width of border
+            //     ),
+            //     borderRadius: BorderRadius.circular(5)
             // ),
-            color:Colors.grey,
+            color:Colors.white70,
             margin: EdgeInsets.fromLTRB(20, 0, 20, 0),
 
             child: new TextFormField(
-    controller: _postTextController,
-    cursorHeight: 30,
-    cursorColor: Colors.red,
+          controller: _postTextController,
+          cursorHeight: 30,
+          cursorColor: Colors.red,
 
-  minLines: 5,
-    maxLines: 10,
-    decoration: InputDecoration(
+        minLines: 5,
+          maxLines: 10,
+          decoration: InputDecoration(
 
 
-    label: const Center(
-      child: Text("Enter some description", style: TextStyle(fontSize: 20,color: Colors.black),)
-    ),
-            border: OutlineInputBorder(borderSide : BorderSide.none
-            ),
-    ),
-    onSaved :(value){
-            desc = value!;
-            print(desc);
-    },
-    // The validator receives the text that the user has entered.
-    validator: (value) {
-    if (value == null || value.isEmpty) {
-    return 'Please enter some text';
-    }
-    return null;
-    },
-    ),
+          label: const Center(
+            child: Text("Enter some description", style: TextStyle(fontSize: 20,color: Colors.black),)
+          ),
+                  border: OutlineInputBorder(borderSide : BorderSide.none
+                  ),
+          ),
+          onSaved :(value){
+                  desc = value!;
+                  print(desc);
+          },
+          // The validator receives the text that the user has entered.
+          validator: (value) {
+          if (value == null || value.isEmpty) {
+          return 'Please enter some text';
+          }
+          return null;
+          },
+          ),
           ),
           SizedBox(height: 20),
 
@@ -307,7 +329,7 @@ void dispose(){
                 await ref.putFile(File(image!.path));
 
                 ref.getDownloadURL().then((value) =>
-                _postManager.submitPost(description: desc , profilepic: value , ));
+                _postManager.submitPost(description: desc , profilepic: value , tags:tags));
 
 
 // Add a new comment to the "comments" subcollection
@@ -340,19 +362,19 @@ void dispose(){
             ),
             child: ElevatedButton(
               onPressed: () {
-                final desc = _postTextController.text;
-                _postManager.submitPost(description: desc, profilepic:"");
-                Navigator.push(context, MaterialPageRoute(
-                    builder: (context) => PostListScreen()));
-
-                // Validate returns true if the form is valid, or false otherwise.
-                if (_formKey.currentState!.validate()) {
-                  // If the form is valid, display a snackbar. In the real world,
-                  // you'd often call a server or save the information in a database.
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Processing Data')),
-                  );
-                }
+                // final desc = _postTextController.text;
+                // _postManager.submitPost(description: desc, profilepic:"");
+                // Navigator.push(context, MaterialPageRoute(
+                //     builder: (context) => PostListScreen()));
+                //
+                // // Validate returns true if the form is valid, or false otherwise.
+                // if (_formKey.currentState!.validate()) {
+                //   // If the form is valid, display a snackbar. In the real world,
+                //   // you'd often call a server or save the information in a database.
+                //   ScaffoldMessenger.of(context).showSnackBar(
+                //     const SnackBar(content: Text('Processing Data')),
+                //   );
+                // }
                 },
               child: const Text('Submit'),
             ),

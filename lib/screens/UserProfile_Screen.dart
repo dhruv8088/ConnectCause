@@ -267,10 +267,11 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:ngoapp/Managers/user_profile_manager.dart';
 import 'package:ngoapp/screens/ChatRoom.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class UserProfileScreen extends StatefulWidget{
   const UserProfileScreen({required this.email});
-  final String email;
+  final String? email;
 
   @override
   State<StatefulWidget> createState() => _UserProfileScreenState();
@@ -286,6 +287,9 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
   late final Stream<DocumentSnapshot> userStream;
 
   String data = '';
+  String datano = '';
+  String link = '';
+  String selected_field = '';
   int c = 0;
   List followerdata = [];
   List followingdata = [];
@@ -335,6 +339,11 @@ bool isEditingText = false;
       Map<String, dynamic>? dataMap = snapshot?.data() as Map<String, dynamic>? ;
       // as Map<String, dynamic>?;
       data = dataMap!['name'] as String;
+      datano = dataMap!['rNo'] as String ;
+      link = dataMap!['link'] as String;
+
+      selected_field = dataMap!['selected_field'] as String;
+      print("selected field: ${selected_field}");
       print(dataMap!['following']);
       // c = dataMap!['following'].length as int;
       // Map<String, List>? followerMap = snapshot?.data() as Map<String, List>?;
@@ -479,16 +488,78 @@ bool isEditingText = false;
               child: Container(
                 width: size.width/1.11,
 
-                decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10),
-                  border: Border.all(
-                    width: 1.5,
-                    color: Colors.grey,
-                  )
-                ),
+
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    (selected_field == "NGO")?Container(
+                      child: Text(
+                          'NGO Information',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                        ),
+                      ),
+                    ):SizedBox(height: 0,width: 0,),
+                    (selected_field == "NGO")?Container(
+                      padding: EdgeInsets.fromLTRB(10, 12, 0, 0),
+                      width: MediaQuery.of(context).size.width/1.12,
+                      height: MediaQuery.of(context).size.height / 8,
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                          border: Border.all(
+                            width: 1.5,
+                            color: Colors.grey,
+                          )
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'NGO Unique No. : ${datano}',
+                            style: TextStyle(
+                              fontWeight: FontWeight.normal,
+                              fontSize: 16,
+                            ),
+                          ),
+
+                              SizedBox(height:5),
+
+                              Text(
+                                'Website/Insta : ${link}',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.normal,
+
+                                  fontSize: 16,
+                                ),
+
+                              ),
+
+
+                      ],
+
+                      )
+                      // child: Text(
+                      //   'NGO Unique No. : ${datano} \n\n Website/Insta : ${link}',
+                      //   style: TextStyle(
+                      //     fontWeight: FontWeight.normal,
+                      //     fontSize: 14,
+                      //   ),
+                      // ),
+                      // child: Text(
+                      //   'NGO Unique No. : ${datano} \n\n Website/Insta : ${link}',
+                      //   style: TextStyle(
+                      //     fontWeight: FontWeight.normal,
+                      //     fontSize: 14,
+                      //   ),
+                      // ),
+                    ):(SizedBox(height: 0, width: 0,)),
+
+                    (selected_field == 'NGO')?ElevatedButton(
+                      child: new Text('Check Validity'),
+                      onPressed: () => launch('https://ngodarpan.gov.in/index.php/search/'),
+                    ):SizedBox(height: 0, width: 0),
+
                     Text(
                       ' Bio',
                       style: TextStyle(
@@ -496,10 +567,20 @@ bool isEditingText = false;
                         fontSize: 16,
                       ),
                     ),
-                    SizedBox(height: size.height / 45),
+                    SizedBox(height: size.height / 70),
 
-                    SizedBox(height: 16),
+
                     Container(
+                      padding: EdgeInsets.fromLTRB(10, 12, 0, 0),
+                      width: MediaQuery.of(context).size.width/1.12,
+                        height: MediaQuery.of(context).size.height / 15,
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                            border: Border.all(
+                              width: 1.5,
+                              color: Colors.grey,
+                            )
+                        ),
                       child:_editTitleTextField() ,
                     ),
                     SizedBox(height: 8),

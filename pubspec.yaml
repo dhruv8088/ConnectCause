@@ -45,6 +45,11 @@ dependencies:
   firebase_messaging: ^14.3.0
   comment_box: ^0.0.18
   url_launcher: ^6.1.10
+  pdf: ^3.6.0
+  path_provider: ^2.0.14
+  flutter_email_sender: ^5.2.0
+  multiselect: ^0.1.0
+
 
 
 

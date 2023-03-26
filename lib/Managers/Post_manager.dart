@@ -37,6 +37,7 @@ class PostManager with ChangeNotifier {
   Future<bool> submitPost({
     String? description,
     String? profilepic,
+    List<String>? tags,
   }) async {
     bool isSubmitted = false;
 
@@ -56,7 +57,8 @@ class PostManager with ChangeNotifier {
         "email" : _firebaseAuth.currentUser?.email,
         // "name" : Prop.name,
         "like" : [],
-        "completed" : "No"
+        "completed" : "No",
+        "tags":tags,
       }).then((_) {
         isSubmitted = true;
         setMessage('Post submitted successfully!');

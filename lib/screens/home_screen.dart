@@ -16,6 +16,8 @@ import 'package:ngoapp/screens/signup_screen.dart';
 import 'package:ngoapp/screens/userPost_screen.dart';
 import 'package:url_launcher/url_launcher.dart' as UrlLauncher;
 
+import 'ExploreScreen.dart';
+
 class HomeScreen extends StatefulWidget{
   HomeScreen({required this.email });
   final String email ;
@@ -418,8 +420,8 @@ class _HomeScreenState extends State<HomeScreen>{
                                   // ),
                                 Image.network(
                                     data['profile_pic'],
-                                    height: 180,
-                                    width: 400,
+                                    height: MediaQuery.of(context).size.height / 3.5,
+                                    width: MediaQuery.of(context).size.width / 1.11,
                                   ),
 
                                   SizedBox(
@@ -510,6 +512,8 @@ class _HomeScreenState extends State<HomeScreen>{
         ),
       ),
         bottomNavigationBar: Container(
+          height: 47,
+          padding:  EdgeInsets.fromLTRB(30, 0, 0, 0),
 
           decoration: BoxDecoration(
               color: Colors.blueGrey,
@@ -531,7 +535,7 @@ class _HomeScreenState extends State<HomeScreen>{
             ),
 
             SizedBox(
-              width: 35,
+              width: 42,
             ),
     InkWell(onTap:(){
     Navigator.push(context, MaterialPageRoute(builder: (context) => ChatScreen()));
@@ -542,7 +546,7 @@ class _HomeScreenState extends State<HomeScreen>{
     ),
 
             SizedBox(
-              width: 35,
+              width: 42,
             ),
             InkWell(onTap: (){
               Navigator.push(context, MaterialPageRoute(builder: (context) => MyCustomForm()));
@@ -550,15 +554,15 @@ class _HomeScreenState extends State<HomeScreen>{
             child: Icon(Icons.add_a_photo_outlined , size:30 , color: Colors.white),
     ),
             SizedBox(
-              width: 35,
+              width: 42,
             ),
             InkWell(onTap: (){
-
+              Navigator.push(context, MaterialPageRoute(builder: (context) => ExploreScreen(email : auth.currentUser?.email)));
             },
-            child:Icon(Icons.people_alt_sharp,
+            child:Icon(Icons.explore,
     size: 30,color: Colors.white) ),
                 SizedBox(
-             width: 35,
+             width: 42,
                            ),
     InkWell(onTap: (){
       Navigator.push(context, MaterialPageRoute(builder: (context) => PostListScreen()));
@@ -566,9 +570,9 @@ class _HomeScreenState extends State<HomeScreen>{
 
     child:Icon(Icons.save,
     size: 30,color: Colors.white) ),
-    SizedBox(
-    width: 40,
-    ),
+    // SizedBox(
+    // width: 42,
+    // ),
     //           ElevatedButton(
     //           child: Text("Refresh"),
     //           onPressed: _refreshScreen,

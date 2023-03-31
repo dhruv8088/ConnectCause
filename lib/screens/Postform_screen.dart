@@ -155,6 +155,7 @@ void dispose(){
     // print("email in post form screen:${widget.email}");
     return Material(
 
+
       key: _formKey,
 
 
@@ -167,7 +168,7 @@ void dispose(){
 
         children: <Widget> [
          AppBar(
-            title: const Text('Connect Cause'),
+            title: const Text('Add Post'),
             backgroundColor: Colors.blueGrey,
             actions: <Widget> [
               IconButton(
@@ -226,27 +227,34 @@ void dispose(){
           SizedBox(
             height: 30,
           ),
-          Container(
-            margin: EdgeInsets.fromLTRB(20, 0, 20, 0),
-            decoration: BoxDecoration(
-                border: Border(
-                  bottom: BorderSide(width: 2.0, color : Colors.black26)
-                )
-            ),
-
-            child : Row(
-              children: [
-                Padding(padding: EdgeInsets.fromLTRB(0, 0, 0, 2)),
-                Text("Add Post",
-                    style : TextStyle(fontWeight: FontWeight.bold, fontSize: 30))
-              ],
-            ),
-          ),
+          // Container(
+          //   margin: EdgeInsets.fromLTRB(20, 0, 20, 0),
+          //   decoration: BoxDecoration(
+          //       border: Border(
+          //         bottom: BorderSide(width: 2.0, color : Colors.black26)
+          //       )
+          //   ),
+          //
+          //   child : Row(
+          //     children: [
+          //       Padding(padding: EdgeInsets.fromLTRB(0, 0, 0, 2)),
+          //       Text("Add Post",
+          //           style : TextStyle(fontWeight: FontWeight.bold, fontSize: 30))
+          //     ],
+          //   ),
+          // ),
           SizedBox(
             height: 20,
           ),
           Container(
-            color:Colors.white30,
+            decoration: BoxDecoration(
+                border: Border.all(
+                  color: Colors.black, //color of border
+                  width: 2, //width of border
+                ),
+                borderRadius: BorderRadius.circular(5)
+            ),
+
             margin: EdgeInsets.fromLTRB(20, 0, 20, 0),
             child: DropDownMultiSelect(
               onChanged: (List<String> x) {
@@ -265,20 +273,23 @@ void dispose(){
             height: MediaQuery.of(context).size.height / 12,
           ),
           Container(
-            // decoration: BoxDecoration(
-            //     border: Border.all(
-            //       color: Colors.black, //color of border
-            //       width: 2, //width of border
-            //     ),
-            //     borderRadius: BorderRadius.circular(5)
-            // ),
-            color:Colors.white70,
+
+
             margin: EdgeInsets.fromLTRB(20, 0, 20, 0),
+            decoration: BoxDecoration(
+                border: Border.all(
+                  color: Colors.black, //color of border
+                  width: 2, //width of border
+                ),
+                borderRadius: BorderRadius.circular(5)
+            ),
 
             child: new TextFormField(
           controller: _postTextController,
           cursorHeight: 30,
           cursorColor: Colors.red,
+
+
 
         minLines: 5,
           maxLines: 10,
@@ -306,76 +317,85 @@ void dispose(){
           ),
           SizedBox(height: 20),
 
-          InkWell(
-            child: Icon(Icons.add_a_photo_outlined,
-            size : 40,
-            color: Colors.black,),
-            onTap: (){
-              final desc = _postTextController.text;
-              void PostPic() async {
+          Container(
+            padding: EdgeInsets.fromLTRB(30, 0, 0, 0),
 
-                final image = await ImagePicker().pickImage(
-                    source: ImageSource.gallery,
-                    maxWidth: 512,
-                    maxHeight: 512,
-                    imageQuality: 90);
-                var rnd = Random();
-                FirebaseAuth _auth = FirebaseAuth.instance;
-                FirebaseFirestore _firestore = FirebaseFirestore.instance;
-                Reference ref = await FirebaseStorage.instance
-                    .ref()
-                    .child("${_auth.currentUser?.email}-${rnd.nextInt(100000)}_profile.jpg");
+            child: InkWell(
+              child: Row(
 
-                await ref.putFile(File(image!.path));
+                children: [
+                  Icon(Icons.add_a_photo_outlined,
+                    size : 30,
+                    color: Colors.black,),
+                  SizedBox(
+                    width: 20
+                  ),
+                  Text("Select an Image",
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w500
+                  ),),
 
-                ref.getDownloadURL().then((value) =>
-                _postManager.submitPost(description: desc , profilepic: value , tags:tags));
+                ],
+              ),
+
+              onTap: (){
+                final desc = _postTextController.text;
+                void PostPic() async {
+
+                  final image = await ImagePicker().pickImage(
+                      source: ImageSource.gallery,
+                      maxWidth: 512,
+                      maxHeight: 512,
+                      imageQuality: 90);
+                  var rnd = Random();
+                  FirebaseAuth _auth = FirebaseAuth.instance;
+                  FirebaseFirestore _firestore = FirebaseFirestore.instance;
+                  Reference ref = await FirebaseStorage.instance
+                      .ref()
+                      .child("${_auth.currentUser?.email}-${rnd.nextInt(100000)}_profile.jpg");
+
+                  await ref.putFile(File(image!.path));
+
+                  ref.getDownloadURL().then((value) =>
+                  _postManager.submitPost(description: desc , profilepic: value , tags:tags));
 
 
 // Add a new comment to the "comments" subcollection
 
-                Navigator.push(context, MaterialPageRoute(
-                    builder: (context) => PostListScreen()));
+                  Navigator.push(context, MaterialPageRoute(
+                      builder: (context) => PostListScreen()));
 
-                _refreshScreen();
+                  _refreshScreen();
 
 
-              }
+                }
 
-              PostPic();
-              // Navigator.push(context, MaterialPageRoute(
-              //     builder: (context) => PostListScreen()));
+                PostPic();
+                // Navigator.push(context, MaterialPageRoute(
+                //     builder: (context) => PostListScreen()));
 
-            },
+              },
+            ),
           ),
-          Text("Select an Image"),
+
           SizedBox(
             height: 50,
           ),
 
 
-          ButtonTheme(
-            minWidth: 200,
-            height: 200,
-            colorScheme: ColorScheme.dark(
-              onBackground: Colors.black,
-            ),
+          SizedBox(
+            height: 50,
+            width: 350,
+
             child: ElevatedButton(
               onPressed: () {
-                // final desc = _postTextController.text;
-                // _postManager.submitPost(description: desc, profilepic:"");
-                // Navigator.push(context, MaterialPageRoute(
-                //     builder: (context) => PostListScreen()));
-                //
-                // // Validate returns true if the form is valid, or false otherwise.
-                // if (_formKey.currentState!.validate()) {
-                //   // If the form is valid, display a snackbar. In the real world,
-                //   // you'd often call a server or save the information in a database.
-                //   ScaffoldMessenger.of(context).showSnackBar(
-                //     const SnackBar(content: Text('Processing Data')),
-                //   );
-                // }
+
                 },
+              style: ElevatedButton.styleFrom(
+                primary: Color.fromRGBO(31, 59, 77, 100)
+
+              ),
               child: const Text('Submit'),
             ),
           ),

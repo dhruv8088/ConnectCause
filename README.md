@@ -19,7 +19,7 @@ To address the above mentioned problem statement, we need to develop a proper in
   <a href="https://youtu.be/MT_SmNTJi8g">YouTube Video Link</a>
   
 ## Presentation Link:
-  <a href="https://1drv.ms/p/s!AkXkNHgfp_ltgv5ceQ8umveBbcfZRw?e=j5ljFX">Presentation</a>
+  <a href="https://docs.google.com/presentation/d/1S8jTnQjh3aZpvLhoV5G5bjyDWuFWCrNm/edit?usp=sharing&ouid=106449341784550462731&rtpof=true&sd=true">Presentation</a>
 
 
 

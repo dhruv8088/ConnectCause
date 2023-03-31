@@ -409,7 +409,7 @@ class _PostScreenState extends State<PostListScreen> {
 
             Image.network(
                   data['profile_pic'],
-                  height : 160,
+                  height : 200,
                   width : MediaQuery.of(context).size.width/1.12,
                   fit: BoxFit.cover,
 
@@ -418,16 +418,23 @@ class _PostScreenState extends State<PostListScreen> {
                   height: 10
                 ),
                 Row(
+
                   children: [
 
-                    Text(
-                        data['description']
+                    Container(
+                      padding: EdgeInsets.fromLTRB(10, 0, 0, 10),
+                      width: MediaQuery.of(context).size.width / 1.25,
+                     
+                      child: Text(
+                          data['description']
+                      ),
                     ),
                   ],
                 ),
                 SizedBox(
-                    height: 20
-                ),
+                  height: 20,
+                )
+
 
               ],
             ),

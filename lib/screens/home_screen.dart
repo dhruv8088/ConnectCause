@@ -128,6 +128,19 @@ class _HomeScreenState extends State<HomeScreen>{
     return NgoList;
   }
 
+  List<Map<String, dynamic>> getLocationUser(NGOLocation) {
+    List<Map<String, dynamic>> UserList = [];
+    print("user location : ${NGOLocation}");
+    for (int j = 0; j<user_mail.length; j++) {
+      print("heloo from user ${user_mail.length}");
+      if(user_mail[j]['selected_field'] == "Individual" && user_mail[j]['location'] == NGOLocation) {
+        print("one Ngo : ${user_mail[j]}");
+        UserList.add((user_mail[j]));
+      }
+    }
+    return UserList;
+  }
+
 
   void onPost() async {
 
@@ -214,6 +227,17 @@ class _HomeScreenState extends State<HomeScreen>{
         await firestore.collection('posts').where("email" , isEqualTo: listNgo[i]['email']).get();
         listQuerySnapShots.add(querySnapshot2);
       }
+    }
+    else{
+      String NGOLocation = currentUser['location'];
+      List<Map<String, dynamic>> listUser = getLocationUser(NGOLocation);
+      for(int i = 0; i<listUser.length;i++) {
+        QuerySnapshot querySnapshot2 =
+        await firestore.collection('posts').where("email" , isEqualTo: listUser[i]['email']).get();
+        listQuerySnapShots.add(querySnapshot2);
+      }
+
+
     }
 
 
@@ -333,170 +357,221 @@ class _HomeScreenState extends State<HomeScreen>{
 
                         children: [
 
-                          Material(
-                            elevation: 35,
-                              borderRadius: BorderRadius.circular(30),
-                            child: Padding(
-                              padding: const EdgeInsets.fromLTRB(10, 10, 10, 3),
-                              child: Container(
+                          Container(
+                            padding: EdgeInsets.fromLTRB(10, 10, 10, 3),
+                            child: Material(
 
-                              decoration: BoxDecoration(
-                                  // color: Colors.limeAccent,
-                                border: Border.all(
-                                  width: 1
-                                ),
-                                    borderRadius: BorderRadius.circular(20)
-                              ),
-                              child: Column(
 
-                                  mainAxisAlignment : MainAxisAlignment.center,
-                                 crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  SizedBox(
-                                    height: 5,
+                              elevation: 7,
+                                borderRadius: BorderRadius.circular(30),
+                              child: Padding(
+                                padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
+                                child: Container(
+
+
+                                decoration: BoxDecoration(
+                                    // color: Colors.limeAccent,
+                                  border: Border.all(
+                                    width: 1
                                   ),
-                                  Container(
-                                    decoration: BoxDecoration(
-                                      border: Border(
-                                          bottom: BorderSide(
-                                              width: 0.5
+                                      borderRadius: BorderRadius.circular(20)
+                                ),
+                                child: Column(
+
+                                    mainAxisAlignment : MainAxisAlignment.center,
+                                   crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    SizedBox(
+                                      height: 5,
+                                    ),
+                                    Container(
+                                      decoration: BoxDecoration(
+                                        border: Border(
+                                            bottom: BorderSide(
+                                                width: 0.5
+                                            )
+                                        ),
+                                      ),
+                                      child: Row(
+                                        children: [
+                                          SizedBox(width: 7),
+                                          Container(
+
+                                             // decoration: BoxDecoration(
+                                             //   border: Border(
+                                             //     bottom: BorderSide(
+                                             //       width: 1
+                                             //     )
+                                             //   )
+                                             // ),
+
+                                            child: IconButton(onPressed: () {
+                                              Navigator.push(context , MaterialPageRoute(builder:(context) => UserProfileScreen(email : post_email)));
+                                            },
+                                               icon: Icon(Icons.account_circle_rounded , size: 37),
+
+                                            ),
+                                          ),
+                                          SizedBox(
+                                            width: 5,
+                                          ),
+                                          Text(
+
+                                            username,
+                                            style: TextStyle(
+                                              fontSize: 12,
+                                              fontWeight: FontWeight.w500,
+
+                                            ),
+                                          ),
+                                          SizedBox(width: 150),
+                                          data['completed'] == 'Yes'?
+                                          Row(
+                                            children: [
+                                              Icon(
+                                                  Icons.verified , color: Colors.green
+                                              ),
+                                              Text(
+                                                "Completed",
+                                                style: TextStyle(
+                                                  fontSize: 12
+                                                ),
+                                              )
+
+                                            ],
+                                          ):
+                                          Row(
+                                            children: [
+                                              Icon(
+                                                  Icons.verified , color: Colors.grey
+                                              ),
+                                              Text(
+                                                "Not Completed",
+                                                style: TextStyle(
+                                                    fontSize: 12
+                                                ),
+                                              )
+
+                                            ],
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      height: 5,
+                                    ),
+                                    Container(
+
+                                      // child:
+                                      child: Align(
+
+
+                                          alignment: Alignment.centerLeft,
+                                          child: Container(
+                                            // decoration : BoxDecoration(
+                                            //   border: Border.all(width: 2)
+                                            //
+                                            // ),
+                                              padding: EdgeInsets.fromLTRB(10, 0, 0, 0),
+                                            //padding: Padding(padding: EdgeInsets.fromLTRB(0, top, right, bottom),),
+                                            child: Text(
+                                                " ${data['description']} "
+                                            ),
+
                                           )
                                       ),
                                     ),
-                                    child: Row(
-                                      children: [
-                                        SizedBox(width: 7),
-                                        Container(
+                                    SizedBox(
+                                      height: 15,
+                                    ),
+                                  Image.network(
+                                      data['profile_pic'],
+                                      height: MediaQuery.of(context).size.height / 3.5,
+                                      width: MediaQuery.of(context).size.width / 1.11,
+                                    ),
 
-                                           // decoration: BoxDecoration(
-                                           //   border: Border(
-                                           //     bottom: BorderSide(
-                                           //       width: 1
-                                           //     )
-                                           //   )
-                                           // ),
+                                    SizedBox(
+                                      height: 10,
+                                    ),
+                                    Container(
 
-                                          child: IconButton(onPressed: () {
-                                            Navigator.push(context , MaterialPageRoute(builder:(context) => UserProfileScreen(email : post_email)));
+                                      decoration: BoxDecoration(
+                    //     gradient: LinearGradient(
+                    //     colors: [
+                    //      Color(0xFF1980BF),
+                    //       Color(0xFF687EBB),
+                    //       Color(0xFF837DB8)
+                    // ]
+
+                                        border: Border(
+                                          top: BorderSide(
+                                            width: 0.5
+                                          )
+                                        )
+                                      ),
+
+                                      child: Row(
+
+                                        crossAxisAlignment: CrossAxisAlignment.center,
+                                        mainAxisAlignment: MainAxisAlignment.start,
+                                        children: [
+                                          SizedBox(
+                                            width: 10,
+                                          ),
+                                         IconButton(onPressed: () {
+                                           var postID = '${data['description']}_${data['email']}';
+                                            onLike(postID);
+                                            print("liked");
+                                            // setState(() {
+                                            //   liked = 1;
+                                            // });
+                                           liked = 1;
+
+                                         },
+                                           icon: (postLikedStatus.contains('${data['description']}_${data['email']}'))?Icon(Icons.thumb_up_alt,
+                                               color: Colors.blue):Icon(Icons.thumb_up_alt,
+                                               color: Colors.black12)
+
+                                         ),
+                                          Text(
+                                          data['like'].length.toString()
+                                          ),
+
+                                          SizedBox(
+                                            width: 20,
+                                          ),
+
+                                          IconButton(onPressed: () {
+
+                                            Navigator.push(context, MaterialPageRoute(builder:(context) => CommentScreen(auth.currentUser?.email, '${data['description']}_${data['email']}')));
                                           },
-                                             icon: Icon(Icons.account_circle_rounded , size: 37),
-
+                                            icon: Icon(Icons.comment_bank_rounded,
+                                              color: Colors.red,)
+                                            // Icons.comment_bank_rounded,
+                                            // color: Colors.red,
                                           ),
-                                        ),
-                                        Text(
-
-                                          username
-                                        )
-                                      ],
-                                    ),
-                                  ),
-                                  SizedBox(
-                                    height: 5,
-                                  ),
-                                  Container(
-
-                                    // child:
-                                    child: Align(
-
-
-                                        alignment: Alignment.centerLeft,
-                                        child: Container(
-                                          // decoration : BoxDecoration(
-                                          //   border: Border.all(width: 2)
-                                          //
-                                          // ),
-
-                                          //padding: Padding(padding: EdgeInsets.fromLTRB(0, top, right, bottom),),
-                                          child: Text(
-                                              "   ${data['description']} "
+                                          SizedBox(
+                                            width: 20,
                                           ),
+                                          IconButton(onPressed: () {
+                                          UrlLauncher.launch("tel:+91${usernumber}" as String);
 
-                                        )
+                                          },
+                                              icon: Icon(Icons.call))
+
+
+                                        ],
+
+                                      ),
                                     ),
-                                  ),
-                                  // SizedBox(
-                                  //   height: 0,
-                                  //       width: 0
-                                  // ),
-                                Image.network(
-                                    data['profile_pic'],
-                                    height: MediaQuery.of(context).size.height / 3.5,
-                                    width: MediaQuery.of(context).size.width / 1.11,
-                                  ),
-
-                                  SizedBox(
-                                    height: 10,
-                                  ),
-                                  Container(
-                                    decoration: BoxDecoration(
-                                      border: Border(
-                                        top: BorderSide(
-                                          width: 0.5
-                                        )
-                                      )
+                                    SizedBox(
+                                      height: 10,
                                     ),
 
-                                    child: Row(
-
-                                      crossAxisAlignment: CrossAxisAlignment.center,
-                                      mainAxisAlignment: MainAxisAlignment.start,
-                                      children: [
-                                        SizedBox(
-                                          width: 10,
-                                        ),
-                                       IconButton(onPressed: () {
-                                         var postID = '${data['description']}_${data['email']}';
-                                          onLike(postID);
-                                          print("liked");
-                                          // setState(() {
-                                          //   liked = 1;
-                                          // });
-                                         liked = 1;
-
-                                       },
-                                         icon: (postLikedStatus.contains('${data['description']}_${data['email']}'))?Icon(Icons.thumb_up_alt,
-                                             color: Colors.blue):Icon(Icons.thumb_up_alt,
-                                             color: Colors.black12)
-
-                                       ),
-                                        Text(
-                                        data['like'].length.toString()
-                                        ),
-
-                                        SizedBox(
-                                          width: 20,
-                                        ),
-
-                                        IconButton(onPressed: () {
-
-                                          Navigator.push(context, MaterialPageRoute(builder:(context) => CommentScreen(auth.currentUser?.email, '${data['description']}_${data['email']}')));
-                                        },
-                                          icon: Icon(Icons.comment_bank_rounded,
-                                            color: Colors.red,)
-                                          // Icons.comment_bank_rounded,
-                                          // color: Colors.red,
-                                        ),
-                                        SizedBox(
-                                          width: 20,
-                                        ),
-                                        IconButton(onPressed: () {
-                                        UrlLauncher.launch("tel:+91${usernumber}" as String);
-
-                                        },
-                                            icon: Icon(Icons.call))
-
-
-                                      ],
-
-                                    ),
-                                  ),
-                                  SizedBox(
-                                    height: 10,
-                                  ),
-
-                                ],
-                              ),
+                                  ],
+                                ),
                     ),
+                              ),
                             ),
                           ),
                           SizedBox(height: 15,)
@@ -523,20 +598,24 @@ class _HomeScreenState extends State<HomeScreen>{
               )
             )
           ),
-          child: Row(
-
-          children: <Widget> [
-            InkWell(onTap:(){
-              Navigator.push(context, MaterialPageRoute(builder: (context) => ChatScreen()));
-            },
-              child: Icon(Icons.house_outlined ,
-              size: 30 , color: Colors.white,),
+          child: Container(
+            decoration: BoxDecoration(
 
             ),
+            child: Row(
 
-            SizedBox(
-              width: 42,
-            ),
+            children: <Widget> [
+              InkWell(onTap:(){
+                Navigator.push(context, MaterialPageRoute(builder: (context) => HomeScreen(email: widget.email)));
+              },
+                child: Icon(Icons.house_outlined ,
+                size: 30 , color: Colors.white,),
+
+              ),
+
+              SizedBox(
+                width: 42,
+              ),
     InkWell(onTap:(){
     Navigator.push(context, MaterialPageRoute(builder: (context) => ChatScreen()));
     },
@@ -545,25 +624,25 @@ class _HomeScreenState extends State<HomeScreen>{
 
     ),
 
-            SizedBox(
-              width: 42,
-            ),
-            InkWell(onTap: (){
-              Navigator.push(context, MaterialPageRoute(builder: (context) => MyCustomForm()));
-            },
-            child: Icon(Icons.add_a_photo_outlined , size:30 , color: Colors.white),
+              SizedBox(
+                width: 42,
+              ),
+              InkWell(onTap: (){
+                Navigator.push(context, MaterialPageRoute(builder: (context) => MyCustomForm()));
+              },
+              child: Icon(Icons.add_a_photo_outlined , size:30 , color: Colors.white),
     ),
-            SizedBox(
-              width: 42,
-            ),
-            InkWell(onTap: (){
-              Navigator.push(context, MaterialPageRoute(builder: (context) => ExploreScreen(email : auth.currentUser?.email)));
-            },
-            child:Icon(Icons.explore,
+              SizedBox(
+                width: 42,
+              ),
+              InkWell(onTap: (){
+                Navigator.push(context, MaterialPageRoute(builder: (context) => ExploreScreen(email : auth.currentUser?.email)));
+              },
+              child:Icon(Icons.explore,
     size: 30,color: Colors.white) ),
-                SizedBox(
-             width: 42,
-                           ),
+                  SizedBox(
+               width: 42,
+                             ),
     InkWell(onTap: (){
       Navigator.push(context, MaterialPageRoute(builder: (context) => PostListScreen()));
     },
@@ -589,6 +668,7 @@ class _HomeScreenState extends State<HomeScreen>{
 
 
       ],
+            ),
           ),
         ),
     //     bottomSheet : Container(

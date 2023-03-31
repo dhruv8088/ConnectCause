@@ -194,7 +194,7 @@ class _ExploreScreenState extends State<ExploreScreen>{
     flexibleSpace:Container(
       width: MediaQuery.of(context).size.width / 20,
       color:Colors.white,
-      margin: EdgeInsets.fromLTRB(50, 45, 40, 10),
+      margin: EdgeInsets.fromLTRB(50, 45, 40, 5),
       child: DropDownMultiSelect(
         onChanged: (List<String> x) {
           setState(() {
@@ -540,9 +540,7 @@ class _ExploreScreenState extends State<ExploreScreen>{
 
     child:Icon(Icons.save,
     size: 30,color: Colors.white) ),
-    SizedBox(
-    width: 40,
-    ),
+
     ],
     ),
     ),
